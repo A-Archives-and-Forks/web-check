@@ -1,0 +1,30 @@
+# Build artifacts and deps, regenerated inside the image
+node_modules
+dist
+.astro
+.netlify
+.vercel
+
+# VCS and CI
+.git
+.gitignore
+.github
+
+# Local env and secrets, must never be baked into an image
+.env
+.env.*
+
+# Editor, OS and scratch files
+.DS_Store
+.idea
+.vscode
+alicia-notes
+
+# Docs and deploy configs not used at build or runtime
+*.md
+LICENSE
+docker-compose.yml
+fly.toml
+render.yaml
+netlify.toml
+vercel.json
