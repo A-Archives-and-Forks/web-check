@@ -1,25 +1,24 @@
-ARG NODE_VERSION=22
 
-# Debian release for every stage, the final one uses its -slim variant
+# Node and Debian versions
+ARG NODE_VERSION=22
 ARG DEBIAN_VERSION=bookworm
 
-# Runtime deps only, resolved without the dev tree so hoisting matches what Astro's server imports
 FROM node:${NODE_VERSION}-${DEBIAN_VERSION} AS deps
 
 WORKDIR /app
 
-# Chromium comes from apt in the final stage, so skip the browsers npm would fetch
+# Skip Chromium until the final stage
 ENV PUPPETEER_SKIP_DOWNLOAD='true' \
     NODE_CHROMIUM_SKIP_INSTALL='true'
 
 COPY package.json yarn.lock ./
 
-# --pure-lockfile, as dropping the dev deps would otherwise count as a lockfile change
+# Install deps, without changing lockfile
 RUN npm pkg delete devDependencies && \
     yarn install --pure-lockfile --network-timeout 100000 && \
     rm -rf /app/node_modules/.cache
 
-# Full image, not slim, for the node-gyp toolchain any unprebuilt dep needs
+# Build stage, using the full image because we need the full toolchain
 FROM node:${NODE_VERSION}-${DEBIAN_VERSION} AS build
 
 SHELL ["/bin/bash", "-euo", "pipefail", "-c"]
@@ -27,8 +26,7 @@ SHELL ["/bin/bash", "-euo", "pipefail", "-c"]
 WORKDIR /app
 
 # The build needs no browser either
-ENV PUPPETEER_SKIP_DOWNLOAD='true' \
-    NODE_CHROMIUM_SKIP_INSTALL='true'
+ENV PUPPETEER_SKIP_DOWNLOAD='true' NODE_CHROMIUM_SKIP_INSTALL='true'
 
 COPY package.json yarn.lock ./
 
@@ -51,7 +49,7 @@ COPY --from=build /app/public ./public
 COPY --from=build /app/server.js /app/healthcheck.js /app/package.json /app/yarn.lock ./
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends chromium traceroute && \
+    apt-get install -y --no-install-recommends chromium traceroute tini && \
     rm -rf /var/lib/apt/lists/*
 
 # Fail the build here if the runtime tree can't load the compiled server
@@ -75,4 +73,6 @@ LABEL org.opencontainers.image.title="Web-Check" \
 HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
     CMD ["node", "healthcheck.js"]
 
-CMD ["yarn", "start"]
+ENTRYPOINT ["/usr/bin/tini", "--"]
+
+CMD ["node", "server.js"]

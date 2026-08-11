@@ -3,7 +3,8 @@ const port = process.env.PORT || 3000;
 
 try {
   const response = await fetch(`http://127.0.0.1:${port}/healthz`);
-  process.exit(response.ok ? 0 : 1);
+  const { ready } = await response.json();
+  process.exit(response.ok && ready ? 0 : 1);
 } catch {
   process.exit(1);
 }

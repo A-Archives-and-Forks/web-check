@@ -19,7 +19,7 @@ services:
     region: oregon
     image:
       url: docker.io/lissy93/web-check:latest
-    healthCheckPath: /
+    healthCheckPath: /healthz
     autoDeployTrigger: off
     envVars:
       - key: PORT
