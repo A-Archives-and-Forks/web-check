@@ -38,6 +38,10 @@ const dirPath = path.join(__dirname, API_DIR); // Path to the lambda functions d
 const guiPath = path.join(__dirname, 'dist', 'client');
 const placeholderFilePath = path.join(__dirname, 'public', 'placeholder.html');
 const handlers = {}; // Will store list of API endpoints
+const { version } = JSON.parse(fs.readFileSync(path.join(__dirname, 'package.json'), 'utf-8'));
+const apiFiles = fs
+  .readdirSync(dirPath, { withFileTypes: true })
+  .filter((dirent) => dirent.isFile() && dirent.name.endsWith('.js'));
 process.env.WC_SERVER = 'true'; // Tells middleware to return in non-lambda mode
 
 // Enable CORS
@@ -46,6 +50,19 @@ app.use(
     origin: process.env.API_CORS_ORIGIN || '*',
   }),
 );
+
+// Sits above the GUI catch-all, so it still answers even when the app itself is broken
+app.get('/healthz', (req, res) => {
+  res.set('Cache-Control', 'no-store'); // Stops a proxy handing a monitor a stale "ok"
+  res.status(200).json({
+    status: 'ok',
+    // Routes register async, so we're listening a moment before they're actually live
+    ready: Object.keys(handlers).length === apiFiles.length,
+    version,
+    uptime: Math.round(process.uptime()),
+    timestamp: new Date().toISOString(),
+  });
+});
 
 // Define max requests within each time frame
 const limits = [
@@ -79,25 +96,22 @@ if (process.env.API_ENABLE_RATE_LIMIT === 'true') {
 }
 
 // Read and register each API function as an Express routes
-fs.readdirSync(dirPath, { withFileTypes: true })
-  .filter((dirent) => dirent.isFile() && dirent.name.endsWith('.js'))
-  .forEach(async (dirent) => {
-    const routeName = dirent.name.split('.')[0];
-    const route = `${API_DIR}/${routeName}`;
-    // const handler = require(path.join(dirPath, dirent.name));
+apiFiles.forEach(async (dirent) => {
+  const routeName = dirent.name.split('.')[0];
+  const route = `${API_DIR}/${routeName}`;
 
-    const handlerModule = await import(path.join(dirPath, dirent.name));
-    const handler = handlerModule.default || handlerModule;
-    handlers[route] = handler;
+  const handlerModule = await import(path.join(dirPath, dirent.name));
+  const handler = handlerModule.default || handlerModule;
+  handlers[route] = handler;
 
-    app.get(route, async (req, res) => {
-      try {
-        await handler(req, res);
-      } catch (err) {
-        res.status(500).json({ error: err.message });
-      }
-    });
+  app.get(route, async (req, res) => {
+    try {
+      await handler(req, res);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
   });
+});
 
 const renderPlaceholderPage = async (res, msgId, logs) => {
   const errorMessages = {

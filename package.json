@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "@astrojs/check": "^0.9.10",
+    "@astrojs/node": "^11.0.3",
     "@astrojs/react": "^6.0.2",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
@@ -72,7 +73,6 @@
   },
   "devDependencies": {
     "@astrojs/netlify": "^8.1.3",
-    "@astrojs/node": "^11.0.3",
     "@astrojs/sitemap": "^3.7.3",
     "@astrojs/svelte": "^9.0.1",
     "@astrojs/ts-plugin": "^1.10.10",
