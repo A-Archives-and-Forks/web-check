@@ -16,6 +16,13 @@
 <table align="center">
   <tr>
     <td align="center" width="33%">
+      <a href="https://nubela.co/?utm_source=github&utm_medium=sponsorship&utm_campaign=oss_sponsorships&utm_content=github_readme&utm_id=web_check_2026">
+        <img src="https://pixelflare.cc/alicia/sponsors/ninja-pear.png" width="260" alt="NinjaPear"><br>
+        <b>NinjaPear</b>
+      </a><br>
+      <sub>API to get a full B2B profiles from any URL</sub>
+    </td>
+    <td align="center" width="33%">
       <a href="https://terminaltrove.com/?utm_campaign=github&utm_medium=referral&utm_content=web-check&utm_source=wcgh">
         <img src="https://pixelflare.cc/alicia/sponsors/terminal-trove.png" width="260" alt="Terminal Trove"><br>
         <b>Terminal Trove</b>
