@@ -643,6 +643,10 @@ Websites can include certain meta tags, that tell search engines and social medi
 
 Adding this data to your site will boost SEO, and as an OSINT researcher it can be useful to understand how a given web app describes itself
 
+Where a site declares a `twitter:site` handle, Web-Check also reads that X profile's public
+page metadata, and shows whether the account links back to the site it was found on. This
+needs no API key or X account.
+
 ###### Useful Links
 
 - [SocialSharePreview.com](https://socialsharepreview.com/)

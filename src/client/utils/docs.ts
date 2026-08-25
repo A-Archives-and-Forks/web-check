@@ -453,7 +453,7 @@ const docs: Doc[] = [
     title: 'Social Tags',
     description:
       'Websites can include certain meta tags, that tell search engines and social media platforms what info to display. This usually includes a title, description, thumbnail, keywords, author, social accounts, etc.',
-    use: 'Adding this data to your site will boost SEO, and as an OSINT researcher it can be useful to understand how a given web app describes itself',
+    use: 'Adding this data to your site will boost SEO, and as an OSINT researcher it can be useful to understand how a given web app describes itself. Where a twitter:site handle is declared, the public X profile is also checked, to show whether that account links back to the site',
     resources: [
       { title: 'SocialSharePreview.com', link: 'https://socialsharepreview.com/' },
       {

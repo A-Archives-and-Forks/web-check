@@ -14,6 +14,12 @@ const cardStyles = `
       color: ${colors.primary};
     }
   }
+  .x-avatar {
+    width: 1.2rem;
+    border-radius: 50%;
+    vertical-align: text-bottom;
+    margin-right: 0.25rem;
+  }
 `;
 
 const OgBanner = ({ ogImage, ogUrl }: { ogImage: string; ogUrl?: string }): JSX.Element => {
@@ -27,6 +33,8 @@ const OgBanner = ({ ogImage, ogUrl }: { ogImage: string; ogUrl?: string }): JSX.
 
 const SocialTagsCard = (props: { data: any; title: string; actionButtons: any }): JSX.Element => {
   const tags = props.data;
+  const xProfile = tags.xProfile;
+  const xHandle = xProfile?.handle || tags.xHandle;
   return (
     <Card heading={props.title} actionButtons={props.actionButtons} styles={cardStyles}>
       {tags.title && <Row lbl="Title" val={tags.title} />}
@@ -43,11 +51,28 @@ const SocialTagsCard = (props: { data: any; title: string; actionButtons: any })
       )}
       {tags.twitterSite && (
         <Row lbl="" val="">
-          <span className="lbl">Twitter Site</span>
+          <span className="lbl">X Profile</span>
           <span className="val">
-            <a href={`https://x.com/${tags.twitterSite}`}>{tags.twitterSite}</a>
+            {xHandle ? (
+              <a target="_blank" rel="noreferrer" href={`https://x.com/${xHandle}`}>
+                {xProfile?.avatar && <img className="x-avatar" src={xProfile.avatar} alt="" />}@
+                {xHandle}
+              </a>
+            ) : (
+              tags.twitterSite
+            )}
           </span>
         </Row>
+      )}
+      {xProfile?.exists === false && <Row lbl="X Account" val="❌ No such account" />}
+      {xProfile?.name && <Row lbl="X Name" val={xProfile.name} />}
+      {xProfile?.joined && <Row lbl="X Joined" val={xProfile.joined} />}
+      {xProfile?.posts && <Row lbl="X Posts" val={xProfile.posts} />}
+      {xProfile?.website && (
+        <Row
+          lbl="X Links Back"
+          val={xProfile.linksBack ? '✅ Yes' : `❌ No (${xProfile.website})`}
+        />
       )}
       {tags.author && <Row lbl="Author" val={tags.author} />}
       {tags.publisher && <Row lbl="Publisher" val={tags.publisher} />}

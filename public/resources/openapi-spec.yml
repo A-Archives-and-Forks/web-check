@@ -1771,6 +1771,46 @@ paths:
                     type: string
                     description: The viewport settings of the page
                     example: 'width=device-width, initial-scale=1, user-scalable=1 , viewport-fit=auto'
+                  xHandle:
+                    type: string
+                    description: The twitter:site value normalised to a bare X handle
+                    example: 'duckduckgo'
+                  xProfile:
+                    type: object
+                    description: Public profile data for the declared X handle, when it could be read
+                    properties:
+                      exists:
+                        type: boolean
+                        description: Whether the handle resolves to a live X account
+                        example: true
+                      handle:
+                        type: string
+                        description: The handle as X spells it, with original casing
+                        example: 'DuckDuckGo'
+                      name:
+                        type: string
+                        description: The display name on the profile
+                        example: 'DuckDuckGo'
+                      avatar:
+                        type: string
+                        description: The profile picture URL
+                        example: 'https://pbs.twimg.com/profile_images/2060472537109127171/58I7LtOs_200x200.png'
+                      joined:
+                        type: string
+                        description: When the account was created
+                        example: '2008-04-24T01:57:35.000Z'
+                      posts:
+                        type: string
+                        description: The post count as X displays it
+                        example: '48.8K'
+                      website:
+                        type: string
+                        description: The website declared on the X profile
+                        example: 'https://duckduckgo.com/'
+                      linksBack:
+                        type: boolean
+                        description: Whether that website matches the scanned domain
+                        example: true
         '204':
           $ref: '#/components/responses/Skipped'
         '500':
