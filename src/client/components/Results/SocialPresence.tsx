@@ -43,14 +43,28 @@ const BrandIcon = ({ network }: { network: string }): JSX.Element | null => {
   );
 };
 
-const status = (profile: any): string => {
-  if (profile.checked === false) return '⚠️ Could not be checked';
-  if (!profile.exists) return '❌ No such account';
-  if (profile.domainVerified) return '✅ Handle is this domain';
-  if (profile.linksBack) {
-    return profile.websiteVerified ? '✅ Links back, network verified' : '✅ Links back';
+const verification = (profile: any): [string, string] => {
+  if (profile.checked === false) {
+    return ['⚠️ Unknown', 'The network could not be reached, so this account was not checked'];
   }
-  return profile.website ? '⚠️ Links to another site' : '⚠️ No website listed';
+  if (!profile.exists) return ['❌ No', 'This handle does not resolve to a live account'];
+  if (profile.domainVerified) {
+    return ['✅ Yes', 'The handle is this domain, so the network has verified control of it'];
+  }
+  if (profile.linksBack) {
+    return [
+      '✅ Yes',
+      profile.websiteVerified
+        ? 'The profile links back to this site, and the network has verified the link'
+        : 'The profile links back to this site',
+    ];
+  }
+  return [
+    '⚠️ No',
+    profile.website
+      ? `The profile links to ${profile.website} instead`
+      : 'The profile lists no website to check against',
+  ];
 };
 
 const num = (value: any): string =>
@@ -64,34 +78,44 @@ const SocialPresenceCard = (props: {
   const profiles: any[] = props.data || [];
   return (
     <Card heading={props.title} actionButtons={props.actionButtons} styles={cardStyles}>
-      {profiles.map((profile) => (
-        <Fragment key={`${profile.network}-${profile.handle}`}>
-          <Heading className="network" as="h4" align="left" color={colors.primary} size="small">
-            <BrandIcon network={profile.network} />
-            {LABELS[profile.network] || profile.network}
-          </Heading>
-          <Row lbl="" val="">
-            <span className="lbl">Handle</span>
-            <span className="val">
-              <a target="_blank" rel="noreferrer" href={profile.url}>
-                {profile.avatar && <img className="avatar" src={profile.avatar} alt="" />}@
-                {profile.handle}
-              </a>
-            </span>
-          </Row>
-          {profile.name && <Row lbl="Name" val={profile.name} />}
-          {profile.joined && <Row lbl="Joined" val={profile.joined} />}
-          {profile.count !== undefined && (
-            <Row
-              lbl={profile.network === 'GitHub' ? 'Repositories' : 'Posts'}
-              val={num(profile.count)}
-            />
-          )}
-          {profile.followers !== undefined && <Row lbl="Followers" val={num(profile.followers)} />}
-          {profile.website && !profile.linksBack && <Row lbl="Website" val={profile.website} />}
-          <Row lbl="Verification" val={status(profile)} />
-        </Fragment>
-      ))}
+      {profiles.map((profile) => {
+        const [verdict, detail] = verification(profile);
+        return (
+          <Fragment key={`${profile.network}-${profile.handle}`}>
+            <Heading className="network" as="h4" align="left" color={colors.primary} size="small">
+              <BrandIcon network={profile.network} />
+              {LABELS[profile.network] || profile.network}
+            </Heading>
+            <Row lbl="" val="">
+              <span className="lbl">Handle</span>
+              <span className="val">
+                <a target="_blank" rel="noreferrer" href={profile.url}>
+                  {profile.avatar && <img className="avatar" src={profile.avatar} alt="" />}@
+                  {profile.handle}
+                </a>
+              </span>
+            </Row>
+            {profile.name && <Row lbl="Name" val={profile.name} />}
+            {profile.joined && <Row lbl="Joined" val={profile.joined} />}
+            {profile.count !== undefined && (
+              <Row
+                lbl={profile.network === 'GitHub' ? 'Repositories' : 'Posts'}
+                val={num(profile.count)}
+              />
+            )}
+            {profile.followers !== undefined && (
+              <Row lbl="Followers" val={num(profile.followers)} />
+            )}
+            {profile.website && !profile.linksBack && <Row lbl="Website" val={profile.website} />}
+            <Row lbl="" val="">
+              <span className="lbl">Verification</span>
+              <span className="val" title={detail}>
+                {verdict}
+              </span>
+            </Row>
+          </Fragment>
+        );
+      })}
     </Card>
   );
 };
