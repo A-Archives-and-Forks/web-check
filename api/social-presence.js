@@ -107,6 +107,8 @@ const lookupBluesky = (handle) =>
 
 const fieldUrl = (field) => (field.value?.match(/href="([^"]+)"/) || [])[1];
 
+const transient = (status) => !status || status === 429 || status >= 500;
+
 // Only a definite no returns false; a transient failure throws, so the profile is kept and shown
 const isMastodonInstance = async (host) => {
   const addresses = await dns.lookup(host, { all: true });
@@ -118,8 +120,8 @@ const isMastodonInstance = async (host) => {
     });
     return !!(data?.uri || data?.domain);
   } catch (error) {
-    if (error.response?.status < 500) return false;
-    throw error;
+    if (transient(error.response?.status)) throw error;
+    return false;
   }
 };
 
