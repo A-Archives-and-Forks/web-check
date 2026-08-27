@@ -643,10 +643,6 @@ Websites can include certain meta tags, that tell search engines and social medi
 
 Adding this data to your site will boost SEO, and as an OSINT researcher it can be useful to understand how a given web app describes itself
 
-Where a site declares a `twitter:site` handle, Web-Check also reads that X profile's public
-page metadata, and shows whether the account links back to the site it was found on. This
-needs no API key or X account.
-
 ###### Useful Links
 
 - [SocialSharePreview.com](https://socialsharepreview.com/)
@@ -655,6 +651,29 @@ needs no API key or X account.
 - [Open Graph Protocol](https://ogp.me/)
 - [Twitter Cards](https://developer.twitter.com/en/docs/twitter-for-websites/cards/overview/abouts-cards)
 - [Facebook Open Graph](https://developers.facebook.com/docs/sharing/webmasters)
+
+</details>
+<details>
+<summary><b>Social Presence</b></summary>
+
+<img width="300" src="https://pixelflare.cc/alicia/web-check/wc-social" align="right" />
+
+###### Description
+
+Finds the social accounts a site says are its own, by reading its meta tags, structured data and `rel="me"` links, then looks each one up on the network itself. X, Mastodon, Bluesky and GitHub are supported. Bluesky is also checked against the domain directly, because there a handle can be the domain name.
+
+Every lookup uses free, public endpoints, so no API keys or accounts are needed. Setting `GITHUB_TOKEN` is optional, and only raises GitHub's unauthenticated rate limit.
+
+###### Use Cases
+
+Confirms that the accounts a website points to actually exist, and that they point back to the website in return. A mismatch is worth knowing about: phishing pages routinely claim the social accounts of the brand they impersonate, and a link that only goes one way proves nothing about who owns the account.
+
+###### Useful Links
+
+- [IndieWeb: rel-me](https://indieweb.org/rel-me)
+- [Mastodon link verification](https://docs.joinmastodon.org/user/profile/#verification)
+- [Bluesky domain handles](https://bsky.social/about/blog/4-28-2023-domain-handle-tutorial)
+- [Schema.org sameAs](https://schema.org/sameAs)
 
 </details>
 <details>
